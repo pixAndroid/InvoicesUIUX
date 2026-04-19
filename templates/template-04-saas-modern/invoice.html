@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice {{invoiceNumber}} — {{businessName}}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --p1:    #6366f1;   /* indigo */
+      --p2:    #8b5cf6;   /* violet */
+      --p3:    #a78bfa;
+      --ink:   #111827;
+      --muted: #6b7280;
+      --light: #9ca3af;
+      --border:#e5e7eb;
+      --bg:    #f3f4f6;
+      --card:  #ffffff;
+      --green: #10b981;
+      --red:   #ef4444;
+    }
+
+    html { font-size: 14px; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      background: var(--card);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Hero header ─────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 55%, #a855f7 100%);
+      padding: 36px 44px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* decorative circles */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: 30%;
+      width: 260px; height: 260px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .hero-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand-row { display: flex; align-items: center; gap: 16px; }
+
+    .brand-logo {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .brand-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 14px; }
+
+    .brand-info h1 {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.4px;
+    }
+
+    .brand-info p {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.65);
+      margin-top: 3px;
+      line-height: 1.5;
+    }
+
+    .brand-gstin {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(4px);
+      color: rgba(255,255,255,0.9);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-top: 6px;
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+
+    .inv-block { text-align: right; }
+
+    .inv-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(4px);
+      color: rgba(255,255,255,0.9);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.25);
+      margin-bottom: 10px;
+    }
+
+    .inv-number {
+      font-size: 34px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -1.5px;
+      line-height: 1;
+    }
+
+    /* ── Meta cards row ──────────────────────────────────────── */
+    .meta-cards {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .meta-card {
+      flex: 1;
+      padding: 14px 20px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .meta-card:last-child { border-right: none; }
+    .meta-card:first-child { padding-left: 44px; }
+    .meta-card:last-child { padding-right: 44px; }
+
+    .mc-label { font-size: 9px; font-weight: 700; color: var(--p1); text-transform: uppercase; letter-spacing: 1.2px; }
+    .mc-value { font-size: 13px; font-weight: 600; color: var(--ink); }
+
+    /* ── Content ─────────────────────────────────────────────── */
+    .content { padding: 28px 44px; flex: 1; }
+
+    /* ── Party section ───────────────────────────────────────── */
+    .party-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .party-box {
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .party-box-hdr {
+      background: linear-gradient(90deg, #4f46e5, #7c3aed);
+      padding: 8px 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .party-box-hdr-icon {
+      width: 18px; height: 18px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .party-box-hdr span {
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.85);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+    }
+
+    .party-box-body { padding: 16px 18px; }
+
+    .party-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #eef2ff;
+      color: var(--p1);
+      border: 1px solid #c7d2fe;
+      font-size: 9.5px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin: 0 4px 6px 0;
+    }
+
+    .party-addr { font-size: 12.5px; color: var(--muted); line-height: 1.7; font-style: normal; }
+
+    .contact-list { margin-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+    .contact-entry { font-size: 11.5px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+    .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--p1); flex-shrink: 0; }
+
+    /* ── Table ───────────────────────────────────────────────── */
+    .table-card {
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .table-card-hdr {
+      background: linear-gradient(90deg, #4f46e5, #7c3aed);
+      padding: 10px 16px;
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.8);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+
+    thead tr { background: #f8f9ff; }
+
+    thead th {
+      padding: 11px 16px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--p1);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      text-align: left;
+      border-bottom: 1px solid #e0e7ff;
+    }
+
+    thead th.r { text-align: right; }
+
+    tbody tr { border-bottom: 1px solid var(--border); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #fafbff; }
+
+    tbody td { padding: 12px 16px; font-size: 13px; color: var(--ink); vertical-align: middle; }
+    tbody td.r { text-align: right; }
+
+    .item-name { font-weight: 600; }
+    .item-desc { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+    .num-badge {
+      background: #eef2ff;
+      color: var(--p1);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    /* ── Totals block ────────────────────────────────────────── */
+    .totals-block {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .left-col {}
+
+    /* amount in words */
+    .aw-card {
+      border: 1.5px solid #e0e7ff;
+      background: #f5f3ff;
+      border-left: 4px solid var(--p1);
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+
+    .aw-label { font-size: 9.5px; font-weight: 700; color: var(--p1); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+    .aw-text { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.5; }
+
+    /* tax chips */
+    .tax-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .tax-chip {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .tc-label { font-size: 9.5px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
+    .tc-val { font-size: 16px; font-weight: 700; color: var(--ink); }
+
+    /* Summary card */
+    .summary-card {
+      min-width: 250px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .sc-hdr {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      padding: 10px 20px;
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.85);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+    }
+
+    .sc-body { padding: 4px 0; }
+
+    .sc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .sc-row:last-child { border-bottom: none; }
+
+    .sc-key { color: var(--muted); }
+    .sc-val { font-weight: 600; color: var(--ink); }
+
+    .sc-total {
+      background: #f5f3ff;
+    }
+
+    .sc-total .sc-key { font-size: 14px; font-weight: 700; color: var(--p1); }
+    .sc-total .sc-val { font-size: 17px; font-weight: 800; color: var(--p1); }
+
+    .sc-due {
+      background: #ecfdf5;
+    }
+
+    .sc-due .sc-key { font-size: 13px; font-weight: 700; color: var(--green); }
+    .sc-due .sc-val { font-size: 16px; font-weight: 800; color: var(--green); }
+
+    /* ── Notes / Terms ───────────────────────────────────────── */
+    .notes-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .note-card {
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .note-card-hdr {
+      background: #f9fafb;
+      border-bottom: 1px solid var(--border);
+      padding: 8px 16px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .note-card-body { padding: 12px 16px; font-size: 12px; color: var(--muted); line-height: 1.65; }
+
+    /* ── Footer ──────────────────────────────────────────────── */
+    .footer {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      padding: 18px 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+
+    .footer p { font-size: 11px; color: rgba(255,255,255,0.7); line-height: 1.6; }
+    .footer p strong { color: #fff; }
+
+    .sig-wrap { text-align: right; }
+    .sig-line { width: 120px; border-top: 1px solid rgba(255,255,255,0.35); margin-left: auto; margin-bottom: 5px; }
+    .sig-label { font-size: 10.5px; color: rgba(255,255,255,0.6); }
+
+    /* ── Print ───────────────────────────────────────────────── */
+    @media print {
+      body { background: #fff; }
+      .page { width: 100%; margin: 0; box-shadow: none; }
+      @page { size: A4; margin: 0; }
+    }
+
+    @media screen {
+      body { padding: 24px 0 40px; }
+      .page { box-shadow: 0 8px 40px rgba(99,102,241,0.15); border-radius: 6px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO HEADER -->
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="brand-row">
+        <div class="brand-logo">
+          {{#if businessLogo}}
+            <img src="{{businessLogo}}" alt="{{businessName}}" />
+          {{else}}
+            {{businessInitial}}
+          {{/if}}
+        </div>
+        <div class="brand-info">
+          <h1>{{businessName}}</h1>
+          <p>{{businessAddress}}, {{businessCity}}, {{businessState}}</p>
+          <p>{{businessPhone}} &nbsp;·&nbsp; {{businessEmail}}</p>
+          <span class="brand-gstin">GSTIN: {{businessGstin}}</span>
+        </div>
+      </div>
+      <div class="inv-block">
+        <div class="inv-badge">{{invoiceType}}</div>
+        <div class="inv-number">#{{invoiceNumber}}</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- META CARDS ROW -->
+  <div class="meta-cards">
+    <div class="meta-card">
+      <span class="mc-label">Issue Date</span>
+      <span class="mc-value">{{issueDate}}</span>
+    </div>
+    <div class="meta-card">
+      <span class="mc-label">Due Date</span>
+      <span class="mc-value">{{dueDate}}</span>
+    </div>
+    <div class="meta-card">
+      <span class="mc-label">Place of Supply</span>
+      <span class="mc-value">{{placeOfSupply}}</span>
+    </div>
+    <div class="meta-card">
+      <span class="mc-label">Tax Type</span>
+      <span class="mc-value">{{taxType}}</span>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- PARTY SECTION -->
+    <div class="party-section">
+      <div class="party-box">
+        <div class="party-box-hdr">
+          <span>Billed From</span>
+        </div>
+        <div class="party-box-body">
+          <div class="party-name">{{businessName}}</div>
+          <span class="tag">GSTIN: {{businessGstin}}</span>
+          <address class="party-addr">{{businessAddress}}<br />{{businessCity}}, {{businessState}}</address>
+          <div class="contact-list">
+            <span class="contact-entry"><span class="dot"></span>{{businessPhone}}</span>
+            <span class="contact-entry"><span class="dot"></span>{{businessEmail}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="party-box">
+        <div class="party-box-hdr">
+          <span>Billed To</span>
+        </div>
+        <div class="party-box-body">
+          <div class="party-name">{{customerName}}</div>
+          {{#if customerGstin}}<span class="tag">GSTIN: {{customerGstin}}</span>{{/if}}
+          {{#if customerPan}}<span class="tag">PAN: {{customerPan}}</span>{{/if}}
+          <address class="party-addr">{{customerAddress}}<br />{{customerCity}}, {{customerState}}</address>
+          <div class="contact-list">
+            {{#if customerPhone}}<span class="contact-entry"><span class="dot"></span>{{customerPhone}}</span>{{/if}}
+            {{#if customerEmail}}<span class="contact-entry"><span class="dot"></span>{{customerEmail}}</span>{{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ITEMS TABLE -->
+    <div class="table-card">
+      <div class="table-card-hdr">Line Items</div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px">#</th>
+            <th>Item / Description</th>
+            <th class="r" style="width:60px">Qty</th>
+            <th class="r" style="width:90px">Rate (₹)</th>
+            <th class="r" style="width:70px">Tax %</th>
+            <th class="r" style="width:100px">Amount (₹)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{items}}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TOTALS BLOCK -->
+    <div class="totals-block">
+      <div class="left-col">
+
+        <!-- AMOUNT IN WORDS -->
+        <div class="aw-card">
+          <div class="aw-label">Amount in Words</div>
+          <div class="aw-text">{{amountInWords}}</div>
+        </div>
+
+        <!-- TAX CHIPS -->
+        <div class="tax-grid">
+          <div class="tax-chip">
+            <span class="tc-label">Taxable Amount</span>
+            <span class="tc-val">₹{{taxableAmount}}</span>
+          </div>
+          {{#if cgst}}
+          <div class="tax-chip">
+            <span class="tc-label">CGST</span>
+            <span class="tc-val">₹{{cgst}}</span>
+          </div>
+          {{/if}}
+          {{#if sgst}}
+          <div class="tax-chip">
+            <span class="tc-label">SGST</span>
+            <span class="tc-val">₹{{sgst}}</span>
+          </div>
+          {{/if}}
+          {{#if igst}}
+          <div class="tax-chip">
+            <span class="tc-label">IGST</span>
+            <span class="tc-val">₹{{igst}}</span>
+          </div>
+          {{/if}}
+        </div>
+
+      </div>
+
+      <!-- SUMMARY CARD -->
+      <div class="summary-card">
+        <div class="sc-hdr">Summary</div>
+        <div class="sc-body">
+          <div class="sc-row">
+            <span class="sc-key">Taxable Amount</span>
+            <span class="sc-val">₹{{taxableAmount}}</span>
+          </div>
+          {{#if cgst}}
+          <div class="sc-row">
+            <span class="sc-key">CGST</span>
+            <span class="sc-val">₹{{cgst}}</span>
+          </div>
+          {{/if}}
+          {{#if sgst}}
+          <div class="sc-row">
+            <span class="sc-key">SGST</span>
+            <span class="sc-val">₹{{sgst}}</span>
+          </div>
+          {{/if}}
+          {{#if igst}}
+          <div class="sc-row">
+            <span class="sc-key">IGST</span>
+            <span class="sc-val">₹{{igst}}</span>
+          </div>
+          {{/if}}
+          <div class="sc-row sc-total">
+            <span class="sc-key">Total</span>
+            <span class="sc-val">₹{{total}}</span>
+          </div>
+          <div class="sc-row sc-due">
+            <span class="sc-key">Amount Due</span>
+            <span class="sc-val">₹{{amountDue}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTES & TERMS -->
+    {{#if notes}}
+    <div class="notes-section">
+      <div class="note-card">
+        <div class="note-card-hdr">Notes</div>
+        <div class="note-card-body">{{notes}}</div>
+      </div>
+      {{#if terms}}
+      <div class="note-card">
+        <div class="note-card-hdr">Terms &amp; Conditions</div>
+        <div class="note-card-body">{{terms}}</div>
+      </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p><strong>{{businessName}}</strong><br />{{businessPhone}} &nbsp;·&nbsp; {{businessEmail}}</p>
+    <div class="sig-wrap">
+      <div class="sig-line"></div>
+      <div class="sig-label">Authorised Signatory</div>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
