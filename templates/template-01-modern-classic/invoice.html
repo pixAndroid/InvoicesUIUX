@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice {{invoiceNumber}} — {{businessName}}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    /* ── Reset & base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand:      #1a56db;
+      --brand-dark: #1341b0;
+      --brand-light:#eff6ff;
+      --ink:        #111827;
+      --muted:      #6b7280;
+      --border:     #e5e7eb;
+      --bg:         #f8fafc;
+      --white:      #ffffff;
+      --green:      #059669;
+      --red:        #dc2626;
+      --radius:     8px;
+    }
+
+    html { font-size: 14px; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* ── Page wrapper ─────────────────────────────────────────── */
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header strip ─────────────────────────────────────────── */
+    .header {
+      background: var(--brand);
+      padding: 32px 40px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+    }
+
+    .brand-block {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .brand-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+
+    .brand-info h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-info p {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.75);
+      margin-top: 2px;
+    }
+
+    .invoice-badge {
+      text-align: right;
+    }
+
+    .invoice-type-label {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+
+    .invoice-number {
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    /* ── Meta row ─────────────────────────────────────────────── */
+    .meta-row {
+      background: var(--brand-light);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 40px;
+      display: flex;
+      gap: 40px;
+    }
+
+    .meta-item { display: flex; flex-direction: column; gap: 2px; }
+    .meta-item .label { font-size: 10px; font-weight: 600; color: var(--brand); text-transform: uppercase; letter-spacing: 0.8px; }
+    .meta-item .value { font-size: 13px; font-weight: 600; color: var(--ink); }
+
+    /* ── Content area ─────────────────────────────────────────── */
+    .content { padding: 32px 40px; flex: 1; }
+
+    /* ── Addresses ────────────────────────────────────────────── */
+    .address-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .address-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+    }
+
+    .address-card .card-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--brand);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .address-card .biz-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .address-card .gstin-badge {
+      display: inline-block;
+      background: var(--brand-light);
+      color: var(--brand);
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+
+    .address-card address {
+      font-style: normal;
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .address-card .contact-row {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+    }
+
+    .contact-item {
+      font-size: 11.5px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .contact-item svg { width: 12px; height: 12px; flex-shrink: 0; color: var(--brand); }
+
+    /* ── Items table ──────────────────────────────────────────── */
+    .table-wrap { margin-bottom: 28px; overflow: hidden; border-radius: var(--radius); border: 1px solid var(--border); }
+
+    table { width: 100%; border-collapse: collapse; }
+
+    thead tr { background: var(--brand); }
+
+    thead th {
+      padding: 12px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      text-align: left;
+    }
+
+    thead th.r { text-align: right; }
+
+    tbody tr { border-bottom: 1px solid var(--border); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:nth-child(even) { background: var(--bg); }
+
+    tbody td {
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--ink);
+      vertical-align: middle;
+    }
+
+    tbody td.r { text-align: right; }
+    tbody td.muted { color: var(--muted); font-size: 12px; }
+
+    .item-name { font-weight: 600; color: var(--ink); }
+    .item-desc { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
+    /* ── Totals section ───────────────────────────────────────── */
+    .totals-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      margin-bottom: 28px;
+      align-items: start;
+    }
+
+    .amount-words-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--brand);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+    }
+
+    .amount-words-box .aw-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--brand);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 4px;
+    }
+
+    .amount-words-box .aw-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .totals-table {
+      min-width: 260px;
+    }
+
+    .totals-table table { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .totals-table table td { padding: 10px 16px; font-size: 13px; border-bottom: 1px solid var(--border); }
+    .totals-table table tr:last-child td { border-bottom: none; }
+    .totals-table .t-label { color: var(--muted); }
+    .totals-table .t-val { text-align: right; font-weight: 500; color: var(--ink); }
+
+    .grand-total-row td {
+      background: var(--brand);
+      color: #fff !important;
+      font-size: 15px !important;
+      font-weight: 700 !important;
+      padding: 14px 16px !important;
+    }
+
+    .amount-due-row td {
+      background: #ecfdf5;
+      color: var(--green) !important;
+      font-weight: 700 !important;
+    }
+
+    /* ── Notes & Terms ────────────────────────────────────────── */
+    .notes-terms-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .notes-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+    }
+
+    .notes-card .nc-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--brand);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+
+    .notes-card p {
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Tax Summary ──────────────────────────────────────────── */
+    .tax-summary {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 28px;
+    }
+
+    .tax-summary .ts-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 12px;
+    }
+
+    .tax-chips { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .tax-chip {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 120px;
+    }
+
+    .tax-chip .tc-label { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .tax-chip .tc-val { font-size: 15px; font-weight: 700; color: var(--ink); }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    .footer {
+      background: var(--brand);
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+
+    .footer p { font-size: 11.5px; color: rgba(255,255,255,0.75); }
+    .footer .sig-block { text-align: right; }
+    .footer .sig-line { width: 140px; border-top: 1px solid rgba(255,255,255,0.5); margin-bottom: 4px; margin-left: auto; }
+    .footer .sig-label { font-size: 11px; color: rgba(255,255,255,0.7); }
+
+    .place-supply-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--brand-light);
+      color: var(--brand);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    /* ── Print ────────────────────────────────────────────────── */
+    @media print {
+      body { background: #fff; }
+      .page { width: 100%; margin: 0; box-shadow: none; }
+      @page { size: A4; margin: 0; }
+    }
+
+    @media screen {
+      body { padding: 24px 0 40px; }
+      .page { box-shadow: 0 4px 24px rgba(0,0,0,0.10); border-radius: 4px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── HEADER ───────────────────────────────────────────────── -->
+  <header class="header">
+    <div class="brand-block">
+      <div class="brand-logo">
+        {{#if businessLogo}}
+          <img src="{{businessLogo}}" alt="{{businessName}}" />
+        {{else}}
+          {{businessInitial}}
+        {{/if}}
+      </div>
+      <div class="brand-info">
+        <h1>{{businessName}}</h1>
+        <p>GSTIN: {{businessGstin}}</p>
+        <p>{{businessAddress}}, {{businessCity}}, {{businessState}}</p>
+      </div>
+    </div>
+
+    <div class="invoice-badge">
+      <div class="invoice-type-label">{{invoiceType}}</div>
+      <div class="invoice-number">#{{invoiceNumber}}</div>
+    </div>
+  </header>
+
+  <!-- ── META ROW ─────────────────────────────────────────────── -->
+  <div class="meta-row">
+    <div class="meta-item">
+      <span class="label">Issue Date</span>
+      <span class="value">{{issueDate}}</span>
+    </div>
+    <div class="meta-item">
+      <span class="label">Due Date</span>
+      <span class="value">{{dueDate}}</span>
+    </div>
+    <div class="meta-item">
+      <span class="label">Place of Supply</span>
+      <span class="value">{{placeOfSupply}}</span>
+    </div>
+    <div class="meta-item">
+      <span class="label">Tax Type</span>
+      <span class="value">{{taxType}}</span>
+    </div>
+  </div>
+
+  <!-- ── CONTENT ──────────────────────────────────────────────── -->
+  <main class="content">
+
+    <!-- ADDRESSES -->
+    <div class="address-row">
+      <!-- FROM (business) -->
+      <div class="address-card">
+        <div class="card-title">From</div>
+        <div class="biz-name">{{businessName}}</div>
+        <span class="gstin-badge">GSTIN: {{businessGstin}}</span>
+        <address>
+          {{businessAddress}}<br />
+          {{businessCity}}, {{businessState}}
+        </address>
+        <div class="contact-row">
+          <span class="contact-item">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>
+            {{businessPhone}}
+          </span>
+          <span class="contact-item">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+            {{businessEmail}}
+          </span>
+        </div>
+      </div>
+
+      <!-- TO (customer) -->
+      <div class="address-card">
+        <div class="card-title">Bill To</div>
+        <div class="biz-name">{{customerName}}</div>
+        {{#if customerGstin}}
+        <span class="gstin-badge">GSTIN: {{customerGstin}}</span>
+        {{/if}}
+        {{#if customerPan}}
+        <span class="gstin-badge">PAN: {{customerPan}}</span>
+        {{/if}}
+        <address>
+          {{customerAddress}}<br />
+          {{customerCity}}, {{customerState}}
+        </address>
+        <div class="contact-row">
+          {{#if customerPhone}}
+          <span class="contact-item">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>
+            {{customerPhone}}
+          </span>
+          {{/if}}
+          {{#if customerEmail}}
+          <span class="contact-item">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+            {{customerEmail}}
+          </span>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+
+    <!-- ITEMS TABLE -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px">#</th>
+            <th>Item / Description</th>
+            <th class="r" style="width:70px">Qty</th>
+            <th class="r" style="width:90px">Rate (₹)</th>
+            <th class="r" style="width:70px">Tax %</th>
+            <th class="r" style="width:100px">Amount (₹)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{items}}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TAX SUMMARY -->
+    <div class="tax-summary">
+      <div class="ts-title">Tax Summary</div>
+      <div class="tax-chips">
+        <div class="tax-chip">
+          <span class="tc-label">Taxable Amount</span>
+          <span class="tc-val">₹{{taxableAmount}}</span>
+        </div>
+        {{#if cgst}}
+        <div class="tax-chip">
+          <span class="tc-label">CGST</span>
+          <span class="tc-val">₹{{cgst}}</span>
+        </div>
+        {{/if}}
+        {{#if sgst}}
+        <div class="tax-chip">
+          <span class="tc-label">SGST</span>
+          <span class="tc-val">₹{{sgst}}</span>
+        </div>
+        {{/if}}
+        {{#if igst}}
+        <div class="tax-chip">
+          <span class="tc-label">IGST</span>
+          <span class="tc-val">₹{{igst}}</span>
+        </div>
+        {{/if}}
+      </div>
+    </div>
+
+    <!-- TOTALS -->
+    <div class="totals-row">
+      <div class="amount-words-box">
+        <div class="aw-label">Amount in Words</div>
+        <div class="aw-text">{{amountInWords}}</div>
+      </div>
+      <div class="totals-table">
+        <table>
+          <tbody>
+            <tr>
+              <td class="t-label">Taxable Amount</td>
+              <td class="t-val">₹{{taxableAmount}}</td>
+            </tr>
+            {{#if cgst}}
+            <tr>
+              <td class="t-label">CGST</td>
+              <td class="t-val">₹{{cgst}}</td>
+            </tr>
+            {{/if}}
+            {{#if sgst}}
+            <tr>
+              <td class="t-label">SGST</td>
+              <td class="t-val">₹{{sgst}}</td>
+            </tr>
+            {{/if}}
+            {{#if igst}}
+            <tr>
+              <td class="t-label">IGST</td>
+              <td class="t-val">₹{{igst}}</td>
+            </tr>
+            {{/if}}
+            <tr class="grand-total-row">
+              <td class="t-label">Total</td>
+              <td class="t-val">₹{{total}}</td>
+            </tr>
+            <tr class="amount-due-row">
+              <td class="t-label">Amount Due</td>
+              <td class="t-val">₹{{amountDue}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- NOTES & TERMS -->
+    {{#if notes}}
+    <div class="notes-terms-row">
+      <div class="notes-card">
+        <div class="nc-title">Notes</div>
+        <p>{{notes}}</p>
+      </div>
+      {{#if terms}}
+      <div class="notes-card">
+        <div class="nc-title">Terms &amp; Conditions</div>
+        <p>{{terms}}</p>
+      </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
+  </main>
+
+  <!-- ── FOOTER ────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <p>Thank you for your business!<br />{{businessName}} · {{businessPhone}} · {{businessEmail}}</p>
+    <div class="sig-block">
+      <div class="sig-line"></div>
+      <div class="sig-label">Authorised Signatory</div>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
