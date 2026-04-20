@@ -14,6 +14,7 @@ Each template is **print-ready (A4)**, **PDF-friendly**, and optimised for brows
 | 3 | `template-03-bold-corporate` | Dark navy, bold corporate look | `#0d1b2a` + red `#e84545` |
 | 4 | `template-04-saas-modern` | Indigo gradient, SaaS aesthetic | `#4f46e5` → `#7c3aed` |
 | 5 | `template-05-clean-professional` | Light navy, high-contrast, HSN/SAC column | `#1e3a8a` |
+| 6 | `template-06-luxe-slate` | Dark slate sidebar + teal accent, split layout | `#0f172a` + teal `#14b8a6` |
 
 Each folder contains:
 - `invoice.html` — the template source
@@ -55,8 +56,17 @@ All templates use the following Handlebars-style variables:
 | `{{customerAddress}}` | Customer address |
 | `{{customerCity}}` | Customer city |
 | `{{customerState}}` | Customer state |
+| `{{customerPincode}}` | Customer pincode (optional) |
 | `{{customerEmail}}` | Customer email (optional) |
 | `{{customerPhone}}` | Customer phone (optional) |
+
+### Shipping Address
+| Variable | Description |
+|----------|-------------|
+| `{{shipAddress}}` | Shipping street address (falls back to billing address when empty) |
+| `{{shipCity}}` | Shipping city |
+| `{{shipState}}` | Shipping state |
+| `{{shipPincode}}` | Shipping pincode |
 
 ### Tax & Supply
 | Variable | Description |
@@ -78,7 +88,21 @@ All templates use the following Handlebars-style variables:
 ### Line Items
 | Variable | Description |
 |----------|-------------|
-| `{{items}}` | Rendered HTML for all `<tr>` rows in the items table |
+| `{{items}}` | Rendered HTML for all `<tr>` rows (templates 01–05, legacy) |
+
+Templates 01–05 receive pre-rendered `<tr>` rows via `{{items}}`.  
+**Template 06** uses the native Handlebars loop with per-item variables:
+
+| Variable | Description |
+|----------|-------------|
+| `{{index}}` | Row number (1, 2, 3 …) |
+| `{{description}}` | Item / service name |
+| `{{hsnSac}}` | HSN or SAC code |
+| `{{quantity}}` | Quantity |
+| `{{unit}}` | Unit of measurement (e.g. `Nos`, `Hrs`) |
+| `{{price}}` | Unit rate |
+| `{{gstRate}}` | GST rate (numeric, `%` appended in template) |
+| `{{total}}` | Line total |
 
 ### Footer
 | Variable | Description |
@@ -150,6 +174,37 @@ await browser.close();
   <td class="r">18%</td>        <!-- GST % -->
   <td class="r">10,000.00</td>  <!-- Amount -->
 </tr>
+```
+
+**Template 06** uses a Handlebars `{{#items}}` loop directly inside `<tbody>`:
+```html
+{{#items}}
+<tr>
+  <td>{{index}}</td>
+  <td>{{description}}</td>
+  <td>{{hsnSac}}</td>
+  <td>{{quantity}} {{unit}}</td>
+  <td>{{price}}</td>
+  <td>{{gstRate}}%</td>
+  <td>{{total}}</td>
+</tr>
+{{/items}}
+```
+
+---
+
+## Conditional Blocks
+
+Wrap any HTML in `{{#variable}}…{{/variable}}` to render it only when the variable is non-empty:
+
+```html
+{{#customerGstin}}
+  <span class="id-tag">GSTIN: {{customerGstin}}</span>
+{{/customerGstin}}
+
+{{#customerPan}}
+  <span class="id-tag">PAN: {{customerPan}}</span>
+{{/customerPan}}
 ```
 
 ---

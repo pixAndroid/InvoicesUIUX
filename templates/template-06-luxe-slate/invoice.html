@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice {{invoiceNumber}} — {{businessName}}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --slate:       #0f172a;
+      --slate-mid:   #1e293b;
+      --slate-soft:  #334155;
+      --teal:        #14b8a6;
+      --teal-dark:   #0f766e;
+      --teal-light:  #99f6e4;
+      --teal-xlight: #f0fdfa;
+      --ink:         #0f172a;
+      --sub:         #374151;
+      --muted:       #6b7280;
+      --border:      #e5e7eb;
+      --bg:          #f9fafb;
+      --white:       #ffffff;
+    }
+
+    html { font-size: 14px; }
+
+    body {
+      font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* ── Page (two-column) ────────────────────────────────────── */
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      background: var(--white);
+      display: flex;
+      flex-direction: row;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       SIDEBAR
+    ══════════════════════════════════════════════════════════ */
+    .sidebar {
+      width: 64mm;
+      min-height: 297mm;
+      background: var(--slate);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 32px 22px 28px;
+      position: relative;
+    }
+
+    /* teal bottom accent */
+    .sidebar::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 100%; height: 4px;
+      background: var(--teal);
+    }
+
+    /* ── Logo ─────────────────────────────────────────────────── */
+    .logo-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+
+    .logo-box {
+      width: 62px;
+      height: 62px;
+      border-radius: 16px;
+      background: var(--teal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--slate);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 0 0 3px rgba(20,184,166,0.25), 0 8px 24px rgba(0,0,0,0.35);
+    }
+
+    .logo-box img {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: 16px;
+    }
+
+    /* ── Business info ────────────────────────────────────────── */
+    .biz-name {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      letter-spacing: -0.2px;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .gstin-chip {
+      display: block;
+      text-align: center;
+      font-size: 9.5px;
+      font-weight: 600;
+      color: var(--teal);
+      background: rgba(20,184,166,0.1);
+      border: 1px solid rgba(20,184,166,0.2);
+      border-radius: 4px;
+      padding: 3px 0;
+      margin-bottom: 14px;
+      letter-spacing: 0.2px;
+    }
+
+    .biz-detail {
+      font-size: 10.5px;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      line-height: 1.75;
+    }
+
+    /* ── Sidebar divider ──────────────────────────────────────── */
+    .s-hr {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      margin: 18px 0;
+    }
+
+    /* ── Invoice block ────────────────────────────────────────── */
+    .inv-eyebrow {
+      font-size: 8.5px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--teal);
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .inv-number {
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+      text-align: center;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+      word-break: break-all;
+    }
+
+    .inv-type-badge {
+      display: block;
+      background: var(--teal);
+      color: var(--slate);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 5px 0;
+      border-radius: 5px;
+      margin-bottom: 18px;
+    }
+
+    /* ── Sidebar meta items ───────────────────────────────────── */
+    .s-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 13px;
+    }
+
+    .s-meta-label {
+      font-size: 8.5px;
+      font-weight: 600;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 1.3px;
+    }
+
+    .s-meta-value {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.4;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       MAIN CONTENT
+    ══════════════════════════════════════════════════════════ */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 297mm;
+      overflow: hidden;
+    }
+
+    /* top teal line */
+    .main-top {
+      height: 4px;
+      background: var(--teal);
+      flex-shrink: 0;
+    }
+
+    .content {
+      padding: 24px 26px 20px;
+      flex: 1;
+    }
+
+    /* ── Party cards ──────────────────────────────────────────── */
+    .party-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .party-card {
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .party-card-hdr {
+      background: var(--slate);
+      padding: 6px 14px;
+      font-size: 8.5px;
+      font-weight: 700;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .party-card-body {
+      padding: 13px 14px 11px;
+    }
+
+    .party-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 5px;
+      line-height: 1.3;
+    }
+
+    .id-tag {
+      display: inline-block;
+      background: var(--teal-xlight);
+      color: var(--teal-dark);
+      border: 1px solid var(--teal-light);
+      font-size: 9px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 3px;
+      margin: 0 3px 5px 0;
+    }
+
+    .party-addr {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-style: normal;
+    }
+
+    /* ── Items table ──────────────────────────────────────────── */
+    .table-wrap {
+      margin-bottom: 18px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+    }
+
+    .table-bar {
+      background: var(--slate);
+      padding: 7px 14px;
+      font-size: 8.5px;
+      font-weight: 700;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+
+    thead tr {
+      background: var(--bg);
+      border-bottom: 1.5px solid var(--border);
+    }
+
+    thead th {
+      padding: 9px 10px;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-align: left;
+    }
+
+    thead th.r { text-align: right; }
+    thead th.c { text-align: center; }
+
+    tbody tr { border-bottom: 1px solid var(--border); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:nth-child(even) { background: #fafafa; }
+
+    tbody td {
+      padding: 9px 10px;
+      font-size: 12px;
+      color: var(--ink);
+      vertical-align: middle;
+    }
+
+    tbody td.r { text-align: right; }
+    tbody td.c { text-align: center; }
+
+    .item-name { font-weight: 600; }
+    .item-hsn  { font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+    .idx-badge {
+      display: inline-block;
+      background: var(--teal-xlight);
+      color: var(--teal-dark);
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    /* ── Totals section ───────────────────────────────────────── */
+    .totals-section {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      margin-bottom: 18px;
+      align-items: start;
+    }
+
+    /* Amount in words */
+    .aw-card {
+      background: var(--teal-xlight);
+      border: 1.5px solid var(--teal-light);
+      border-left: 4px solid var(--teal);
+      border-radius: 7px;
+      padding: 13px 14px;
+      margin-bottom: 12px;
+    }
+
+    .aw-label {
+      font-size: 8.5px;
+      font-weight: 700;
+      color: var(--teal-dark);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 4px;
+    }
+
+    .aw-text {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    /* Tax chips grid */
+    .tax-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+
+    .tax-chip {
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      padding: 9px 11px;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .tc-label { font-size: 8.5px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+    .tc-val   { font-size: 14px; font-weight: 700; color: var(--ink); }
+
+    /* Summary table */
+    .summary-wrap { min-width: 210px; }
+
+    .summary-wrap table {
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .summary-wrap tbody td {
+      padding: 8px 14px;
+      font-size: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .summary-wrap tbody tr:last-child td { border-bottom: none; }
+
+    .s-label { color: var(--muted); font-weight: 500; }
+    .s-val   { text-align: right; font-weight: 600; color: var(--ink); }
+
+    .row-total td {
+      background: var(--slate) !important;
+      color: #fff !important;
+      font-weight: 700 !important;
+      border-bottom: none !important;
+    }
+
+    .row-total .s-label { font-size: 13px !important; color: rgba(255,255,255,0.7) !important; }
+    .row-total .s-val   { font-size: 15px !important; color: #fff !important; }
+
+    .row-due td {
+      background: var(--teal-xlight) !important;
+      border-bottom: none !important;
+    }
+
+    .row-due .s-label { color: var(--teal-dark) !important; font-weight: 700 !important; font-size: 12px !important; }
+    .row-due .s-val   { color: var(--teal-dark) !important; font-size: 14px !important; font-weight: 800 !important; }
+
+    /* ── Notes & Terms ────────────────────────────────────────── */
+    .notes-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .note-card {
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      overflow: hidden;
+    }
+
+    .note-hdr {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 6px 13px;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .note-body {
+      padding: 10px 13px;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    .main-footer {
+      padding: 14px 26px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: auto;
+      flex-shrink: 0;
+    }
+
+    .footer-text {
+      font-size: 10.5px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .footer-text strong { color: var(--ink); font-weight: 600; }
+
+    .sig-block { text-align: right; }
+    .sig-line  { width: 120px; border-top: 2px solid var(--teal); margin-bottom: 5px; margin-left: auto; }
+    .sig-name  { font-size: 11.5px; font-weight: 700; color: var(--ink); }
+    .sig-sub   { font-size: 9.5px; color: var(--muted); margin-top: 1px; }
+
+    /* ── Print ────────────────────────────────────────────────── */
+    @media print {
+      body { background: #fff; }
+      .page { width: 100%; margin: 0; box-shadow: none; border-radius: 0; }
+      .sidebar { min-height: 100vh; }
+      @page { size: A4; margin: 0; }
+    }
+
+    @media screen {
+      body { padding: 24px 0 48px; }
+      .page { box-shadow: 0 4px 40px rgba(15,23,42,0.14); border-radius: 4px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══════════════════════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════════════════════ -->
+  <aside class="sidebar">
+
+    <!-- Logo -->
+    <div class="logo-wrap">
+      <div class="logo-box">
+        <img src="{{businessLogo}}" alt="{{businessName}}" onerror="this.style.display='none'" />
+        {{businessInitial}}
+      </div>
+    </div>
+
+    <!-- Business -->
+    <div class="biz-name">{{businessName}}</div>
+    <span class="gstin-chip">GSTIN: {{businessGstin}}</span>
+    <div class="biz-detail">
+      {{businessAddress}}<br />
+      {{businessCity}}, {{businessState}}<br />
+      {{businessPhone}}<br />
+      {{businessEmail}}
+    </div>
+
+    <hr class="s-hr" />
+
+    <!-- Invoice identity -->
+    <div class="inv-eyebrow">Invoice</div>
+    <div class="inv-number">#{{invoiceNumber}}</div>
+    <span class="inv-type-badge">{{invoiceType}}</span>
+
+    <div class="s-meta">
+      <span class="s-meta-label">Issue Date</span>
+      <span class="s-meta-value">{{issueDate}}</span>
+    </div>
+    <div class="s-meta">
+      <span class="s-meta-label">Due Date</span>
+      <span class="s-meta-value">{{dueDate}}</span>
+    </div>
+
+    <hr class="s-hr" />
+
+    <div class="s-meta">
+      <span class="s-meta-label">Place of Supply</span>
+      <span class="s-meta-value">{{placeOfSupply}}</span>
+    </div>
+    <div class="s-meta">
+      <span class="s-meta-label">Tax Type</span>
+      <span class="s-meta-value">{{taxType}}</span>
+    </div>
+
+  </aside>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════════════════════ -->
+  <div class="main">
+
+    <div class="main-top"></div>
+
+    <div class="content">
+
+      <!-- ── PARTY CARDS ─────────────────────────────────────── -->
+      <div class="party-row">
+
+        <!-- BILL TO -->
+        <div class="party-card">
+          <div class="party-card-hdr">Bill To</div>
+          <div class="party-card-body">
+            <div class="party-name">{{customerName}}</div>
+            {{#customerGstin}}<span class="id-tag">GSTIN: {{customerGstin}}</span>{{/customerGstin}}
+            {{#customerPan}}<span class="id-tag">PAN: {{customerPan}}</span>{{/customerPan}}
+            <address class="party-addr">
+              {{customerAddress}}<br />
+              {{customerCity}}, {{customerState}}{{#customerPincode}} — {{customerPincode}}{{/customerPincode}}<br />
+              {{#customerPhone}}{{customerPhone}}&nbsp; {{/customerPhone}}{{#customerEmail}}{{customerEmail}}{{/customerEmail}}
+            </address>
+          </div>
+        </div>
+
+        <!-- SHIP TO -->
+        <div class="party-card">
+          <div class="party-card-hdr">Ship To</div>
+          <div class="party-card-body">
+            <div class="party-name">{{customerName}}</div>
+            <address class="party-addr">
+              {{shipAddress}}<br />
+              {{shipCity}}, {{shipState}}{{#shipPincode}} — {{shipPincode}}{{/shipPincode}}
+            </address>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── ITEMS TABLE ─────────────────────────────────────── -->
+      <div class="table-wrap">
+        <div class="table-bar">Line Items</div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:30px">#</th>
+              <th>Description</th>
+              <th style="width:72px">HSN / SAC</th>
+              <th class="c" style="width:58px">Qty</th>
+              <th class="r" style="width:76px">Rate (₹)</th>
+              <th class="r" style="width:50px">GST%</th>
+              <th class="r" style="width:84px">Amount (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#items}}
+            <tr>
+              <td><span class="idx-badge">{{index}}</span></td>
+              <td><div class="item-name">{{description}}</div></td>
+              <td class="item-hsn">{{hsnSac}}</td>
+              <td class="c">{{quantity}} {{unit}}</td>
+              <td class="r">{{price}}</td>
+              <td class="r">{{gstRate}}%</td>
+              <td class="r">{{total}}</td>
+            </tr>
+            {{/items}}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ── TOTALS ──────────────────────────────────────────── -->
+      <div class="totals-section">
+
+        <div>
+          <!-- Amount in Words -->
+          <div class="aw-card">
+            <div class="aw-label">Amount in Words</div>
+            <div class="aw-text">{{amountInWords}}</div>
+          </div>
+
+          <!-- Tax chips -->
+          <div class="tax-grid">
+            <div class="tax-chip">
+              <span class="tc-label">Taxable</span>
+              <span class="tc-val">₹{{taxableAmount}}</span>
+            </div>
+            <div class="tax-chip">
+              <span class="tc-label">CGST</span>
+              <span class="tc-val">₹{{cgst}}</span>
+            </div>
+            <div class="tax-chip">
+              <span class="tc-label">SGST</span>
+              <span class="tc-val">₹{{sgst}}</span>
+            </div>
+            <div class="tax-chip">
+              <span class="tc-label">IGST</span>
+              <span class="tc-val">₹{{igst}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary table -->
+        <div class="summary-wrap">
+          <table>
+            <tbody>
+              <tr>
+                <td class="s-label">Taxable Amount</td>
+                <td class="s-val">₹{{taxableAmount}}</td>
+              </tr>
+              <tr>
+                <td class="s-label">CGST</td>
+                <td class="s-val">₹{{cgst}}</td>
+              </tr>
+              <tr>
+                <td class="s-label">SGST</td>
+                <td class="s-val">₹{{sgst}}</td>
+              </tr>
+              <tr>
+                <td class="s-label">IGST</td>
+                <td class="s-val">₹{{igst}}</td>
+              </tr>
+              <tr class="row-total">
+                <td class="s-label">Total</td>
+                <td class="s-val">₹{{total}}</td>
+              </tr>
+              <tr class="row-due">
+                <td class="s-label">Amount Due</td>
+                <td class="s-val">₹{{amountDue}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- ── NOTES & TERMS ───────────────────────────────────── -->
+      <div class="notes-row">
+        <div class="note-card">
+          <div class="note-hdr">Notes</div>
+          <div class="note-body">{{notes}}</div>
+        </div>
+        <div class="note-card">
+          <div class="note-hdr">Terms &amp; Conditions</div>
+          <div class="note-body">{{terms}}</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── FOOTER ─────────────────────────────────────────────── -->
+    <footer class="main-footer">
+      <div class="footer-text">
+        <strong>{{businessName}}</strong><br />
+        {{businessPhone}} &nbsp;·&nbsp; {{businessEmail}}
+      </div>
+      <div class="sig-block">
+        <div class="sig-line"></div>
+        <div class="sig-name">{{businessName}}</div>
+        <div class="sig-sub">Authorised Signatory</div>
+      </div>
+    </footer>
+
+  </div><!-- /.main -->
+
+</div><!-- /.page -->
+</body>
+</html>
