@@ -80,9 +80,10 @@
       color: var(--navy);
       flex-shrink: 0;
       overflow: hidden;
+      position: relative;
     }
 
-    .brand-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 9px; }
+    .brand-logo img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 9px; }
 
     .brand-info h1 {
       font-size: 22px;
@@ -403,17 +404,12 @@
   <header class="header">
     <div class="brand-block">
       <div class="brand-logo">
-        {{#if businessLogo}}
-          <img src="{{businessLogo}}" alt="{{businessName}}" />
-        {{else}}
-          {{businessInitial}}
-        {{/if}}
+        <img src="{{businessLogo}}" alt="{{businessName}}" onerror="this.style.display='none'" />
+        {{businessInitial}}
       </div>
       <div class="brand-info">
         <h1>{{businessName}}</h1>
-        {{#if businessGstin}}
         <div class="brand-gstin">GSTIN: {{businessGstin}}</div>
-        {{/if}}
       </div>
     </div>
 
@@ -421,9 +417,7 @@
       <div class="inv-title">{{invoiceType}}</div>
       <div class="inv-number">{{invoiceNumber}}</div>
       <div class="inv-date">Issue Date &nbsp;<strong>{{issueDate}}</strong></div>
-      {{#if dueDate}}
       <div class="inv-date">Due Date &nbsp;<strong>{{dueDate}}</strong></div>
-      {{/if}}
     </div>
   </header>
 
@@ -433,13 +427,13 @@
     <div class="party-col">
       <div class="party-col-label">Bill To</div>
       <div class="party-name">{{customerName}}</div>
-      {{#if customerGstin}}<span class="gstin-tag">GSTIN: {{customerGstin}}</span>{{/if}}
-      {{#if customerPan}}<span class="gstin-tag">PAN: {{customerPan}}</span>{{/if}}
+      <span class="gstin-tag">GSTIN: {{customerGstin}}</span>
+      <span class="gstin-tag">PAN: {{customerPan}}</span>
       <div class="party-detail">
-        {{#if customerEmail}}<div>{{customerEmail}}</div>{{/if}}
-        {{#if customerPhone}}<div>{{customerPhone}}</div>{{/if}}
-        {{#if customerAddress}}<div>{{customerAddress}}</div>{{/if}}
-        {{#if customerCity}}<div>{{customerCity}}{{#if customerState}}, {{customerState}}{{/if}}</div>{{/if}}
+        <div>{{customerEmail}}</div>
+        <div>{{customerPhone}}</div>
+        <div>{{customerAddress}}</div>
+        <div>{{customerCity}}, {{customerState}}</div>
       </div>
     </div>
 
@@ -447,8 +441,8 @@
     <div class="party-col">
       <div class="party-col-label">Ship To</div>
       <div class="party-detail">
-        {{#if customerAddress}}<div>{{customerAddress}}</div>{{/if}}
-        {{#if customerCity}}<div>{{customerCity}}{{#if customerState}}, {{customerState}}{{/if}}</div>{{/if}}
+        <div>{{customerAddress}}</div>
+        <div>{{customerCity}}, {{customerState}}</div>
       </div>
     </div>
 
@@ -456,14 +450,12 @@
     <div class="party-col">
       <div class="party-col-label">Supply Details</div>
       <div class="party-detail">
-        {{#if placeOfSupply}}<div style="font-weight:600;color:#1e293b;margin-bottom:4px;">{{placeOfSupply}}</div>{{/if}}
-        {{#if taxType}}<div>{{taxType}}</div>{{/if}}
-        {{#if businessAddress}}
+        <div style="font-weight:600;color:#1e293b;margin-bottom:4px;">{{placeOfSupply}}</div>
+        <div>{{taxType}}</div>
         <div style="margin-top:8px;font-size:11px;">
           {{businessAddress}}<br/>
-          {{businessCity}}{{#if businessState}}, {{businessState}}{{/if}}
+          {{businessCity}}, {{businessState}}
         </div>
-        {{/if}}
       </div>
     </div>
   </div>
@@ -505,24 +497,18 @@
               <td class="s-label">Taxable Amount</td>
               <td class="s-val">₹{{taxableAmount}}</td>
             </tr>
-            {{#if cgst}}
             <tr>
               <td class="s-label">CGST</td>
               <td class="s-val">₹{{cgst}}</td>
             </tr>
-            {{/if}}
-            {{#if sgst}}
             <tr>
               <td class="s-label">SGST</td>
               <td class="s-val">₹{{sgst}}</td>
             </tr>
-            {{/if}}
-            {{#if igst}}
             <tr>
               <td class="s-label">IGST</td>
               <td class="s-val">₹{{igst}}</td>
             </tr>
-            {{/if}}
             <tr class="grand-total-row">
               <td class="s-label">Grand Total</td>
               <td class="s-val">₹{{total}}</td>
@@ -537,21 +523,17 @@
     </div>
 
     <!-- NOTES & TERMS -->
-    {{#if notes}}
     <hr class="divider" />
     <div class="notes-section">
       <div class="note-col">
         <div class="note-label">Notes</div>
         <div class="note-text">{{notes}}</div>
       </div>
-      {{#if terms}}
       <div class="note-col">
         <div class="note-label">Terms &amp; Conditions</div>
         <div class="note-text">{{terms}}</div>
       </div>
-      {{/if}}
     </div>
-    {{/if}}
 
   </main>
 

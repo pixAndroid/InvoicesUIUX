@@ -78,9 +78,10 @@
       color: #fff;
       flex-shrink: 0;
       overflow: hidden;
+      position: relative;
     }
 
-    .brand-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+    .brand-logo img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
 
     .biz-name {
       font-family: 'Playfair Display', serif;
@@ -337,11 +338,8 @@
     <div class="brand-left">
       <div class="brand-logo-wrap">
         <div class="brand-logo">
-          {{#if businessLogo}}
-            <img src="{{businessLogo}}" alt="{{businessName}}" />
-          {{else}}
-            {{businessInitial}}
-          {{/if}}
+          <img src="{{businessLogo}}" alt="{{businessName}}" onerror="this.style.display='none'" />
+          {{businessInitial}}
         </div>
         <div class="biz-name">{{businessName}}</div>
       </div>
@@ -400,15 +398,19 @@
       <div class="addr-block">
         <div class="addr-label">Billed To</div>
         <div class="addr-name">{{customerName}}</div>
-        {{#if customerGstin}}<span class="gstin-tag" style="margin-bottom:8px;display:inline-block;">GSTIN: {{customerGstin}}</span>{{/if}}
-        {{#if customerPan}}<span class="gstin-tag" style="margin-bottom:8px;display:inline-block;">PAN: {{customerPan}}</span>{{/if}}
+        <span class="gstin-tag" style="margin-bottom:8px;display:inline-block;">GSTIN: {{customerGstin}}</span>
+        <span class="gstin-tag" style="margin-bottom:8px;display:inline-block;">PAN: {{customerPan}}</span>
         <address class="addr-body">
           {{customerAddress}}<br />
           {{customerCity}}, {{customerState}}
         </address>
         <div class="addr-contact">
-          {{#if customerPhone}}<span>{{customerPhone}}</span>{{/if}}
-          {{#if customerEmail}}<span>{{customerEmail}}</span>{{/if}}
+          <span>
+            {{customerPhone}}
+          </span>
+          <span>
+            {{customerEmail}}
+          </span>
         </div>
       </div>
     </div>
@@ -441,24 +443,19 @@
               <td class="st-label">Taxable Amount</td>
               <td class="st-val">₹{{taxableAmount}}</td>
             </tr>
-            {{#if cgst}}
             <tr>
               <td class="st-label">CGST</td>
               <td class="st-val">₹{{cgst}}</td>
             </tr>
-            {{/if}}
-            {{#if sgst}}
             <tr>
               <td class="st-label">SGST</td>
               <td class="st-val">₹{{sgst}}</td>
             </tr>
-            {{/if}}
-            {{#if igst}}
             <tr>
               <td class="st-label">IGST</td>
               <td class="st-val">₹{{igst}}</td>
             </tr>
-            {{/if}}
+            
             <tr class="st-total">
               <td class="st-label">Total</td>
               <td class="st-val">₹{{total}}</td>
@@ -479,20 +476,16 @@
     </div>
 
     <!-- NOTES & TERMS -->
-    {{#if notes}}
-    <div class="notes-section">
+        <div class="notes-section">
       <div class="note-block">
         <div class="nb-title">Notes</div>
         <p>{{notes}}</p>
       </div>
-      {{#if terms}}
-      <div class="note-block">
+            <div class="note-block">
         <div class="nb-title">Terms &amp; Conditions</div>
         <p>{{terms}}</p>
       </div>
-      {{/if}}
     </div>
-    {{/if}}
 
   </main>
 
