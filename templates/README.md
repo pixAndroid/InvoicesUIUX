@@ -120,7 +120,8 @@ await browser.close();
 ```
 
 ### Items row format
-Each items row should follow this structure:
+
+**Templates 01–04** (6 columns: #, Description, Qty, Rate, GST%, Amount):
 ```html
 <tr>
   <td>1</td>
@@ -131,6 +132,22 @@ Each items row should follow this structure:
   <td class="r">1</td>          <!-- Quantity -->
   <td class="r">10,000.00</td>  <!-- Rate -->
   <td class="r">18%</td>        <!-- Tax % -->
+  <td class="r">10,000.00</td>  <!-- Amount -->
+</tr>
+```
+
+**Template 05** (7 columns: #, Description, HSN/SAC, Qty, Rate, GST%, Amount):
+```html
+<tr>
+  <td>1</td>
+  <td>
+    <div class="item-name">Service / Product Name</div>
+    <div class="item-hsn">Optional description</div>
+  </td>
+  <td>998314</td>               <!-- HSN/SAC code -->
+  <td class="c">1</td>          <!-- Quantity -->
+  <td class="r">10,000.00</td>  <!-- Rate -->
+  <td class="r">18%</td>        <!-- GST % -->
   <td class="r">10,000.00</td>  <!-- Amount -->
 </tr>
 ```
