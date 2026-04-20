@@ -13,6 +13,7 @@ Each template is **print-ready (A4)**, **PDF-friendly**, and optimised for brows
 | 2 | `template-02-minimal-elegant` | Minimalist serif, premium feel | `#0f4c81` + gold `#c9a84c` |
 | 3 | `template-03-bold-corporate` | Dark navy, bold corporate look | `#0d1b2a` + red `#e84545` |
 | 4 | `template-04-saas-modern` | Indigo gradient, SaaS aesthetic | `#4f46e5` → `#7c3aed` |
+| 5 | `template-05-clean-professional` | Light navy, high-contrast, HSN/SAC column | `#1e3a8a` |
 
 Each folder contains:
 - `invoice.html` — the template source
