@@ -299,6 +299,21 @@
       color: #fff !important;
     }
 
+    .amount-due-row td {
+      background: #ecfdf5 !important;
+      color: #059669 !important;
+      font-weight: 700 !important;
+      border-bottom: none !important;
+    }
+
+    .amount-due-row .s-label {
+      font-size: 13px;
+    }
+
+    .amount-due-row .s-val {
+      font-size: 16px;
+    }
+
     /* ── Notes & Terms ────────────────────────────────────────── */
     .notes-section {
       display: grid;
@@ -511,6 +526,10 @@
             <tr class="grand-total-row">
               <td class="s-label">Grand Total</td>
               <td class="s-val">₹{{total}}</td>
+            </tr>
+            <tr class="amount-due-row">
+              <td class="s-label">Amount Due</td>
+              <td class="s-val">₹{{amountDue}}</td>
             </tr>
           </tbody>
         </table>
