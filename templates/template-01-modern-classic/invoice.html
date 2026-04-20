@@ -5,23 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Invoice {{invoiceNumber}} — {{businessName}}</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
 
-    /* ── Reset & base ─────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --brand:      #1a56db;
-      --brand-dark: #1341b0;
-      --brand-light:#eff6ff;
-      --ink:        #111827;
+      --navy:       #0f172a;
+      --navy-mid:   #1e293b;
+      --navy-soft:  #334155;
+      --gold:       #f59e0b;
+      --gold-dark:  #d97706;
+      --gold-light: #fef3c7;
+      --ink:        #0f172a;
+      --sub:        #374151;
       --muted:      #6b7280;
       --border:     #e5e7eb;
-      --bg:         #f8fafc;
+      --bg:         #f9fafb;
       --white:      #ffffff;
       --green:      #059669;
-      --red:        #dc2626;
-      --radius:     8px;
     }
 
     html { font-size: 14px; }
@@ -35,7 +36,7 @@
       print-color-adjust: exact;
     }
 
-    /* ── Page wrapper ─────────────────────────────────────────── */
+    /* ── Page ────────────────────────────────────────────────── */
     .page {
       width: 210mm;
       min-height: 297mm;
@@ -45,175 +46,269 @@
       flex-direction: column;
     }
 
-    /* ── Header strip ─────────────────────────────────────────── */
+    /* ── Header ──────────────────────────────────────────────── */
     .header {
-      background: var(--brand);
-      padding: 32px 40px 28px;
+      background: var(--navy);
+      padding: 0;
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 24px;
+      align-items: stretch;
+      position: relative;
+      overflow: hidden;
     }
 
-    .brand-block {
+    /* decorative diagonal stripe */
+    .header::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 120px;
+      width: 3px;
+      height: 100%;
+      background: var(--gold);
+      opacity: 0.5;
+      transform: skewX(-6deg);
+    }
+
+    .header-brand {
+      flex: 1;
+      padding: 30px 40px;
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 18px;
     }
 
     .brand-logo {
-      width: 56px;
-      height: 56px;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.2);
+      width: 60px;
+      height: 60px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.1);
+      border: 1.5px solid rgba(255,255,255,0.15);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-family: 'Sora', sans-serif;
+      font-size: 24px;
       font-weight: 800;
-      color: #fff;
+      color: var(--gold);
       flex-shrink: 0;
       overflow: hidden;
       position: relative;
     }
 
-    .brand-logo img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+    .brand-logo img {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: 14px;
+    }
 
     .brand-info h1 {
-      font-size: 20px;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: -0.3px;
-    }
-
-    .brand-info p {
-      font-size: 11.5px;
-      color: rgba(255,255,255,0.75);
-      margin-top: 2px;
-    }
-
-    .invoice-badge {
-      text-align: right;
-    }
-
-    .invoice-type-label {
-      display: inline-block;
-      background: rgba(255,255,255,0.2);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      padding: 4px 12px;
-      border-radius: 999px;
-      margin-bottom: 8px;
-    }
-
-    .invoice-number {
-      font-size: 26px;
+      font-family: 'Sora', sans-serif;
+      font-size: 21px;
       font-weight: 800;
       color: #fff;
       letter-spacing: -0.5px;
     }
 
-    /* ── Meta row ─────────────────────────────────────────────── */
-    .meta-row {
-      background: var(--brand-light);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 40px;
-      display: flex;
-      gap: 40px;
+    .brand-info p {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 3px;
+      line-height: 1.55;
     }
 
-    .meta-item { display: flex; flex-direction: column; gap: 2px; }
-    .meta-item .label { font-size: 10px; font-weight: 600; color: var(--brand); text-transform: uppercase; letter-spacing: 0.8px; }
-    .meta-item .value { font-size: 13px; font-weight: 600; color: var(--ink); }
+    .gstin-pill {
+      display: inline-block;
+      background: rgba(245,158,11,0.18);
+      color: var(--gold);
+      border: 1px solid rgba(245,158,11,0.35);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-top: 6px;
+      letter-spacing: 0.3px;
+    }
 
-    /* ── Content area ─────────────────────────────────────────── */
-    .content { padding: 32px 40px; flex: 1; }
+    .header-inv {
+      padding: 30px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: center;
+      border-left: 1px solid rgba(255,255,255,0.08);
+      min-width: 220px;
+      position: relative;
+      z-index: 1;
+    }
 
-    /* ── Addresses ────────────────────────────────────────────── */
+    .inv-type-badge {
+      background: var(--gold);
+      color: var(--navy);
+      font-size: 9.5px;
+      font-weight: 800;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 3px;
+      margin-bottom: 10px;
+    }
+
+    .inv-number {
+      font-family: 'Sora', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -1.5px;
+      line-height: 1;
+    }
+
+    /* ── Gold accent bar ──────────────────────────────────────── */
+    .gold-bar {
+      height: 4px;
+      background: linear-gradient(90deg, var(--gold) 0%, #fbbf24 50%, var(--gold-dark) 100%);
+    }
+
+    /* ── Meta strip ──────────────────────────────────────────── */
+    .meta-strip {
+      background: var(--navy-mid);
+      padding: 12px 40px;
+      display: flex;
+      gap: 0;
+    }
+
+    .meta-cell {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding-right: 20px;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      margin-right: 20px;
+    }
+
+    .meta-cell:last-child { border-right: none; margin-right: 0; }
+
+    .mc-label {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+    }
+
+    .mc-value {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.88);
+    }
+
+    /* ── Content ─────────────────────────────────────────────── */
+    .content { padding: 30px 40px; flex: 1; }
+
+    /* ── Address cards ───────────────────────────────────────── */
     .address-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      margin-bottom: 32px;
+      gap: 20px;
+      margin-bottom: 30px;
     }
 
-    .address-card {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px 22px;
+    .addr-card {
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
     }
 
-    .address-card .card-title {
-      font-size: 10px;
+    .addr-card-hdr {
+      background: var(--navy);
+      padding: 8px 18px;
+      font-size: 9px;
       font-weight: 700;
-      color: var(--brand);
+      color: var(--gold);
       text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 10px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border);
+      letter-spacing: 1.8px;
     }
 
-    .address-card .biz-name {
+    .addr-card-body { padding: 16px 18px; }
+
+    .addr-name {
+      font-family: 'Sora', sans-serif;
       font-size: 15px;
       font-weight: 700;
       color: var(--ink);
-      margin-bottom: 4px;
+      margin-bottom: 7px;
     }
 
-    .address-card .gstin-badge {
+    .id-badge {
       display: inline-block;
-      background: var(--brand-light);
-      color: var(--brand);
-      font-size: 10.5px;
+      background: var(--gold-light);
+      color: var(--gold-dark);
+      border: 1px solid #fde68a;
+      font-size: 9.5px;
       font-weight: 600;
       padding: 2px 8px;
       border-radius: 4px;
-      margin-bottom: 8px;
+      margin: 0 5px 6px 0;
     }
 
-    .address-card address {
+    .addr-body {
       font-style: normal;
-      font-size: 12.5px;
+      font-size: 12px;
       color: var(--muted);
-      line-height: 1.7;
+      line-height: 1.75;
     }
 
-    .address-card .contact-row {
+    .addr-contacts {
       margin-top: 8px;
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px 16px;
+      flex-direction: column;
+      gap: 3px;
     }
 
-    .contact-item {
+    .addr-contact {
       font-size: 11.5px;
       color: var(--muted);
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
     }
 
-    .contact-item svg { width: 12px; height: 12px; flex-shrink: 0; color: var(--brand); }
+    .addr-contact::before {
+      content: '›';
+      color: var(--gold-dark);
+      font-weight: 700;
+      font-size: 13px;
+    }
 
-    /* ── Items table ──────────────────────────────────────────── */
-    .table-wrap { margin-bottom: 28px; overflow: hidden; border-radius: var(--radius); border: 1px solid var(--border); }
+    /* ── Items table ─────────────────────────────────────────── */
+    .table-wrap {
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 26px;
+    }
+
+    .table-hdr {
+      background: var(--navy);
+      padding: 9px 16px;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+    }
 
     table { width: 100%; border-collapse: collapse; }
 
-    thead tr { background: var(--brand); }
+    thead tr { background: var(--bg); border-bottom: 1.5px solid var(--border); }
 
     thead th {
-      padding: 12px 16px;
-      font-size: 11px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.9);
+      padding: 10px 14px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--navy-soft);
       text-transform: uppercase;
-      letter-spacing: 0.7px;
+      letter-spacing: 0.6px;
       text-align: left;
     }
 
@@ -221,144 +316,158 @@
 
     tbody tr { border-bottom: 1px solid var(--border); }
     tbody tr:last-child { border-bottom: none; }
-    tbody tr:nth-child(even) { background: var(--bg); }
+    tbody tr:nth-child(even) { background: #fafafa; }
 
     tbody td {
-      padding: 12px 16px;
-      font-size: 13px;
+      padding: 12px 14px;
+      font-size: 12.5px;
       color: var(--ink);
       vertical-align: middle;
     }
 
     tbody td.r { text-align: right; }
-    tbody td.muted { color: var(--muted); font-size: 12px; }
 
     .item-name { font-weight: 600; color: var(--ink); }
-    .item-desc { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+    .item-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
-    /* ── Totals section ───────────────────────────────────────── */
-    .totals-row {
+    /* ── Bottom section ──────────────────────────────────────── */
+    .bottom-section {
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 24px;
-      margin-bottom: 28px;
+      gap: 20px;
+      margin-bottom: 26px;
       align-items: start;
     }
 
-    .amount-words-box {
+    /* Tax breakdown */
+    .tax-breakdown {
       background: var(--bg);
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--brand);
-      border-radius: var(--radius);
-      padding: 16px 20px;
-    }
-
-    .amount-words-box .aw-label {
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--brand);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 4px;
-    }
-
-    .amount-words-box .aw-text {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ink);
-      line-height: 1.5;
-    }
-
-    .totals-table {
-      min-width: 260px;
-    }
-
-    .totals-table table { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-    .totals-table table td { padding: 10px 16px; font-size: 13px; border-bottom: 1px solid var(--border); }
-    .totals-table table tr:last-child td { border-bottom: none; }
-    .totals-table .t-label { color: var(--muted); }
-    .totals-table .t-val { text-align: right; font-weight: 500; color: var(--ink); }
-
-    .grand-total-row td {
-      background: var(--brand);
-      color: #fff !important;
-      font-size: 15px !important;
-      font-weight: 700 !important;
-      padding: 14px 16px !important;
-    }
-
-    .amount-due-row td {
-      background: #ecfdf5;
-      color: var(--green) !important;
-      font-weight: 700 !important;
-    }
-
-    /* ── Notes & Terms ────────────────────────────────────────── */
-    .notes-terms-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 28px;
-    }
-
-    .notes-card {
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
       padding: 18px 20px;
+      margin-bottom: 16px;
     }
 
-    .notes-card .nc-title {
-      font-size: 11px;
+    .tb-title {
+      font-size: 9px;
       font-weight: 700;
-      color: var(--brand);
+      color: var(--navy-soft);
       text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 8px;
-    }
-
-    .notes-card p {
-      font-size: 12.5px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    /* ── Tax Summary ──────────────────────────────────────────── */
-    .tax-summary {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px 20px;
-      margin-bottom: 28px;
-    }
-
-    .tax-summary .ts-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
+      letter-spacing: 1.2px;
       margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--navy);
     }
 
-    .tax-chips { display: flex; gap: 12px; flex-wrap: wrap; }
+    .tb-chips { display: flex; gap: 10px; flex-wrap: wrap; }
 
-    .tax-chip {
+    .tb-chip {
       background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 8px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      padding: 10px 14px;
       display: flex;
       flex-direction: column;
-      gap: 2px;
-      min-width: 120px;
+      gap: 3px;
+      min-width: 110px;
     }
 
-    .tax-chip .tc-label { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-    .tax-chip .tc-val { font-size: 15px; font-weight: 700; color: var(--ink); }
+    .tc-label { font-size: 8.5px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+    .tc-val   { font-size: 15px; font-weight: 700; color: var(--ink); }
 
-    /* ── Footer ───────────────────────────────────────────────── */
+    /* Amount in words */
+    .aw-card {
+      background: var(--gold-light);
+      border: 1.5px solid #fde68a;
+      border-left: 4px solid var(--gold);
+      border-radius: 7px;
+      padding: 14px 16px;
+    }
+
+    .aw-label { font-size: 8.5px; font-weight: 700; color: var(--gold-dark); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .aw-text  { font-size: 12.5px; font-weight: 600; color: var(--ink); line-height: 1.5; }
+
+    /* Totals box */
+    .totals-box {
+      background: var(--navy);
+      border-radius: 10px;
+      overflow: hidden;
+      min-width: 250px;
+    }
+
+    .totals-box-title {
+      background: var(--gold);
+      padding: 10px 20px;
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .totals-inner { padding: 4px 0 8px; }
+
+    .tot-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      font-size: 12.5px;
+    }
+
+    .tot-row:last-child { border-bottom: none; }
+    .tot-key { color: rgba(255,255,255,0.55); }
+    .tot-val { font-weight: 600; color: rgba(255,255,255,0.88); }
+
+    .tot-grand {
+      background: rgba(255,255,255,0.1);
+      margin: 6px 10px;
+      border-radius: 6px;
+      padding: 10px 10px !important;
+      border-bottom: none !important;
+    }
+
+    .tot-grand .tot-key { font-size: 14px; font-weight: 700; color: #fff; }
+    .tot-grand .tot-val { font-size: 18px; font-weight: 800; color: #fff; }
+
+    .tot-due .tot-key { color: #6ee7b7; font-size: 12.5px; font-weight: 700; }
+    .tot-due .tot-val { color: #6ee7b7; font-size: 15px; font-weight: 800; }
+
+    /* ── Notes & Terms ───────────────────────────────────────── */
+    .notes-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    .note-card {
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .note-hdr {
+      background: var(--navy-mid);
+      padding: 7px 16px;
+      font-size: 9px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.65);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .note-body {
+      padding: 12px 16px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── Footer ──────────────────────────────────────────────── */
     .footer {
-      background: var(--brand);
+      background: var(--navy);
       padding: 16px 40px;
       display: flex;
       justify-content: space-between;
@@ -366,24 +475,14 @@
       margin-top: auto;
     }
 
-    .footer p { font-size: 11.5px; color: rgba(255,255,255,0.75); }
-    .footer .sig-block { text-align: right; }
-    .footer .sig-line { width: 140px; border-top: 1px solid rgba(255,255,255,0.5); margin-bottom: 4px; margin-left: auto; }
-    .footer .sig-label { font-size: 11px; color: rgba(255,255,255,0.7); }
+    .footer p { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+    .footer p strong { color: rgba(255,255,255,0.8); }
 
-    .place-supply-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--brand-light);
-      color: var(--brand);
-      font-size: 11px;
-      font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 4px;
-    }
+    .sig-block { text-align: right; }
+    .sig-line { width: 130px; border-top: 1px solid rgba(255,255,255,0.25); margin-left: auto; margin-bottom: 5px; }
+    .sig-label { font-size: 10px; color: rgba(255,255,255,0.45); }
 
-    /* ── Print ────────────────────────────────────────────────── */
+    /* ── Print ───────────────────────────────────────────────── */
     @media print {
       body { background: #fff; }
       .page { width: 100%; margin: 0; box-shadow: none; }
@@ -392,110 +491,102 @@
 
     @media screen {
       body { padding: 0; margin: 0; }
-      .page { width: 100%; margin: 0; box-shadow: 0 4px 24px rgba(0,0,0,0.10); border-radius: 4px; }
+      .page { width: 100%; margin: 0; box-shadow: 0 4px 32px rgba(15,23,42,0.15); border-radius: 4px; }
     }
   </style>
 </head>
 <body>
 <div class="page">
 
-  <!-- ── HEADER ───────────────────────────────────────────────── -->
+  <!-- HEADER -->
   <header class="header">
-    <div class="brand-block">
+    <div class="header-brand">
       <div class="brand-logo">
         <img src="{{businessLogo}}" alt="{{businessName}}" onerror="this.style.display='none'" />
-          {{businessInitial}}
+        {{businessInitial}}
       </div>
       <div class="brand-info">
         <h1>{{businessName}}</h1>
-        <p>GSTIN: {{businessGstin}}</p>
         <p>{{businessAddress}}, {{businessCity}}, {{businessState}}</p>
+        <p>{{businessPhone}} &nbsp;·&nbsp; {{businessEmail}}</p>
+        <span class="gstin-pill">GSTIN: {{businessGstin}}</span>
       </div>
     </div>
-
-    <div class="invoice-badge">
-      <div class="invoice-type-label">{{invoiceType}}</div>
-      <div class="invoice-number">#{{invoiceNumber}}</div>
+    <div class="header-inv">
+      <div class="inv-type-badge">{{invoiceType}}</div>
+      <div class="inv-number">#{{invoiceNumber}}</div>
     </div>
   </header>
 
-  <!-- ── META ROW ─────────────────────────────────────────────── -->
-  <div class="meta-row">
-    <div class="meta-item">
-      <span class="label">Issue Date</span>
-      <span class="value">{{issueDate}}</span>
+  <div class="gold-bar"></div>
+
+  <!-- META STRIP -->
+  <div class="meta-strip">
+    <div class="meta-cell">
+      <span class="mc-label">Issue Date</span>
+      <span class="mc-value">{{issueDate}}</span>
     </div>
-    <div class="meta-item">
-      <span class="label">Due Date</span>
-      <span class="value">{{dueDate}}</span>
+    <div class="meta-cell">
+      <span class="mc-label">Due Date</span>
+      <span class="mc-value">{{dueDate}}</span>
     </div>
-    <div class="meta-item">
-      <span class="label">Place of Supply</span>
-      <span class="value">{{placeOfSupply}}</span>
+    <div class="meta-cell">
+      <span class="mc-label">Place of Supply</span>
+      <span class="mc-value">{{placeOfSupply}}</span>
     </div>
-    <div class="meta-item">
-      <span class="label">Tax Type</span>
-      <span class="value">{{taxType}}</span>
+    <div class="meta-cell">
+      <span class="mc-label">Tax Type</span>
+      <span class="mc-value">{{taxType}}</span>
     </div>
   </div>
 
-  <!-- ── CONTENT ──────────────────────────────────────────────── -->
+  <!-- CONTENT -->
   <main class="content">
 
-    <!-- ADDRESSES -->
+    <!-- ADDRESS CARDS -->
     <div class="address-row">
-      <!-- FROM (business) -->
-      <div class="address-card">
-        <div class="card-title">From</div>
-        <div class="biz-name">{{businessName}}</div>
-        <span class="gstin-badge">GSTIN: {{businessGstin}}</span>
-        <address>
-          {{businessAddress}}<br />
-          {{businessCity}}, {{businessState}}
-        </address>
-        <div class="contact-row">
-          <span class="contact-item">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>
-            {{businessPhone}}
-          </span>
-          <span class="contact-item">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
-            {{businessEmail}}
-          </span>
+      <div class="addr-card">
+        <div class="addr-card-hdr">Billed From</div>
+        <div class="addr-card-body">
+          <div class="addr-name">{{businessName}}</div>
+          <span class="id-badge">GSTIN: {{businessGstin}}</span>
+          <address class="addr-body">
+            {{businessAddress}}<br />
+            {{businessCity}}, {{businessState}}
+          </address>
+          <div class="addr-contacts">
+            <span class="addr-contact">{{businessPhone}}</span>
+            <span class="addr-contact">{{businessEmail}}</span>
+          </div>
         </div>
       </div>
-
-      <!-- TO (customer) -->
-      <div class="address-card">
-        <div class="card-title">Bill To</div>
-        <div class="biz-name">{{customerName}}</div>
-        <span class="gstin-badge">GSTIN: {{customerGstin}}</span>
-        <span class="gstin-badge">PAN: {{customerPan}}</span>
-        <address>
-          {{customerAddress}}<br />
-          {{customerCity}}, {{customerState}}
-        </address>
-        <div class="contact-row">
-                    <span class="contact-item">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>
-            {{customerPhone}}
-          </span>
-                    <span class="contact-item">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
-            {{customerEmail}}
-          </span>
+      <div class="addr-card">
+        <div class="addr-card-hdr">Billed To</div>
+        <div class="addr-card-body">
+          <div class="addr-name">{{customerName}}</div>
+          <span class="id-badge">GSTIN: {{customerGstin}}</span>
+          <span class="id-badge">PAN: {{customerPan}}</span>
+          <address class="addr-body">
+            {{customerAddress}}<br />
+            {{customerCity}}, {{customerState}}
+          </address>
+          <div class="addr-contacts">
+            <span class="addr-contact">{{customerPhone}}</span>
+            <span class="addr-contact">{{customerEmail}}</span>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- ITEMS TABLE -->
     <div class="table-wrap">
+      <div class="table-hdr">Line Items</div>
       <table>
         <thead>
           <tr>
             <th style="width:36px">#</th>
             <th>Item / Description</th>
-            <th class="r" style="width:70px">Qty</th>
+            <th class="r" style="width:60px">Qty</th>
             <th class="r" style="width:90px">Rate (₹)</th>
             <th class="r" style="width:70px">Tax %</th>
             <th class="r" style="width:100px">Amount (₹)</th>
@@ -507,86 +598,87 @@
       </table>
     </div>
 
-    <!-- TAX SUMMARY -->
-    <div class="tax-summary">
-      <div class="ts-title">Tax Summary</div>
-      <div class="tax-chips">
-        <div class="tax-chip">
-          <span class="tc-label">Taxable Amount</span>
-          <span class="tc-val">₹{{taxableAmount}}</span>
+    <!-- BOTTOM SECTION -->
+    <div class="bottom-section">
+      <div>
+        <!-- TAX CHIPS -->
+        <div class="tax-breakdown">
+          <div class="tb-title">Tax Summary</div>
+          <div class="tb-chips">
+            <div class="tb-chip">
+              <span class="tc-label">Taxable Amount</span>
+              <span class="tc-val">₹{{taxableAmount}}</span>
+            </div>
+            <div class="tb-chip">
+              <span class="tc-label">CGST</span>
+              <span class="tc-val">₹{{cgst}}</span>
+            </div>
+            <div class="tb-chip">
+              <span class="tc-label">SGST</span>
+              <span class="tc-val">₹{{sgst}}</span>
+            </div>
+            <div class="tb-chip">
+              <span class="tc-label">IGST</span>
+              <span class="tc-val">₹{{igst}}</span>
+            </div>
+          </div>
         </div>
-        <div class="tax-chip">
-          <span class="tc-label">CGST</span>
-          <span class="tc-val">₹{{cgst}}</span>
+        <!-- AMOUNT IN WORDS -->
+        <div class="aw-card">
+          <div class="aw-label">Amount in Words</div>
+          <div class="aw-text">{{amountInWords}}</div>
         </div>
-        <div class="tax-chip">
-          <span class="tc-label">SGST</span>
-          <span class="tc-val">₹{{sgst}}</span>
-        </div>
-        <div class="tax-chip">
-          <span class="tc-label">IGST</span>
-          <span class="tc-val">₹{{igst}}</span>
-        </div>
-        
       </div>
-    </div>
 
-    <!-- TOTALS -->
-    <div class="totals-row">
-      <div class="amount-words-box">
-        <div class="aw-label">Amount in Words</div>
-        <div class="aw-text">{{amountInWords}}</div>
-      </div>
-      <div class="totals-table">
-        <table>
-          <tbody>
-            <tr>
-              <td class="t-label">Taxable Amount</td>
-              <td class="t-val">₹{{taxableAmount}}</td>
-            </tr>
-            <tr>
-              <td class="t-label">CGST</td>
-              <td class="t-val">₹{{cgst}}</td>
-            </tr>
-            <tr>
-              <td class="t-label">SGST</td>
-              <td class="t-val">₹{{sgst}}</td>
-            </tr>
-            <tr>
-              <td class="t-label">IGST</td>
-              <td class="t-val">₹{{igst}}</td>
-            </tr>
-            
-            <tr class="grand-total-row">
-              <td class="t-label">Total</td>
-              <td class="t-val">₹{{total}}</td>
-            </tr>
-            <tr class="amount-due-row">
-              <td class="t-label">Amount Due</td>
-              <td class="t-val">₹{{amountDue}}</td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- TOTALS BOX -->
+      <div class="totals-box">
+        <div class="totals-box-title">Invoice Summary</div>
+        <div class="totals-inner">
+          <div class="tot-row">
+            <span class="tot-key">Taxable Amount</span>
+            <span class="tot-val">₹{{taxableAmount}}</span>
+          </div>
+          <div class="tot-row">
+            <span class="tot-key">CGST</span>
+            <span class="tot-val">₹{{cgst}}</span>
+          </div>
+          <div class="tot-row">
+            <span class="tot-key">SGST</span>
+            <span class="tot-val">₹{{sgst}}</span>
+          </div>
+          <div class="tot-row">
+            <span class="tot-key">IGST</span>
+            <span class="tot-val">₹{{igst}}</span>
+          </div>
+          <div class="tot-row tot-grand">
+            <span class="tot-key">Grand Total</span>
+            <span class="tot-val">₹{{total}}</span>
+          </div>
+          <div class="tot-row tot-due">
+            <span class="tot-key">Amount Due</span>
+            <span class="tot-val">₹{{amountDue}}</span>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- NOTES & TERMS -->
-        <div class="notes-terms-row">
-      <div class="notes-card">
-        <div class="nc-title">Notes</div>
-        <p>{{notes}}</p>
+    <div class="notes-row">
+      <div class="note-card">
+        <div class="note-hdr">Notes</div>
+        <div class="note-body">{{notes}}</div>
       </div>
-            <div class="notes-card">
-        <div class="nc-title">Terms &amp; Conditions</div>
-        <p>{{terms}}</p>
+      <div class="note-card">
+        <div class="note-hdr">Terms &amp; Conditions</div>
+        <div class="note-body">{{terms}}</div>
       </div>
     </div>
 
   </main>
 
-  <!-- ── FOOTER ────────────────────────────────────────────────── -->
+  <!-- FOOTER -->
   <footer class="footer">
-    <p>Thank you for your business!<br />{{businessName}} · {{businessPhone}} · {{businessEmail}}</p>
+    <p><strong>{{businessName}}</strong><br />{{businessPhone}} &nbsp;·&nbsp; {{businessEmail}}</p>
     <div class="sig-block">
       <div class="sig-line"></div>
       <div class="sig-label">Authorised Signatory</div>
