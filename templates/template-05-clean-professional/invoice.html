@@ -495,7 +495,17 @@
         </tr>
       </thead>
       <tbody>
-        {{{items}}}
+        {{#items}}
+        <tr>
+          <td>{{index}}</td>
+          <td>{{description}}</td>
+          <td>{{hsnSac}}</td>
+          <td class="c">{{quantity}} {{unit}}</td>
+          <td class="r">{{price}}</td>
+          <td class="r">{{gstRate}}%</td>
+          <td class="r">{{total}}</td>
+        </tr>
+        {{/items}}
       </tbody>
     </table>
   </div>
