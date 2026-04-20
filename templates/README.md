@@ -88,9 +88,9 @@ All templates use the following Handlebars-style variables:
 ### Line Items
 | Variable | Description |
 |----------|-------------|
-| `{{items}}` | Rendered HTML for all `<tr>` rows (templates 01–05, legacy) |
+| `{{{items}}}` | Rendered HTML for all `<tr>` rows (templates 01–05, legacy) |
 
-Templates 01–05 receive pre-rendered `<tr>` rows via `{{items}}`.  
+Templates 01–05 receive pre-rendered `<tr>` rows via `{{{items}}}` (triple braces to prevent HTML escaping).  
 **Template 06** uses the native Handlebars loop with per-item variables:
 
 | Variable | Description |
