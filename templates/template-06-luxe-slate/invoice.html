@@ -574,12 +574,12 @@
           <div class="party-card-hdr">Bill To</div>
           <div class="party-card-body">
             <div class="party-name">{{customerName}}</div>
-            {{#customerGstin}}<span class="id-tag">GSTIN: {{customerGstin}}</span>{{/customerGstin}}
-            {{#customerPan}}<span class="id-tag">PAN: {{customerPan}}</span>{{/customerPan}}
+            <span class="id-tag">GSTIN: {{customerGstin}}</span>
+            <span class="id-tag">PAN: {{customerPan}}</span>
             <address class="party-addr">
               {{customerAddress}}<br />
-              {{customerCity}}, {{customerState}}{{#customerPincode}} — {{customerPincode}}{{/customerPincode}}<br />
-              {{#customerPhone}}{{customerPhone}}&nbsp; {{/customerPhone}}{{#customerEmail}}{{customerEmail}}{{/customerEmail}}
+              {{customerCity}}, {{customerState}} — {{customerPincode}}<br />
+              {{customerPhone}}&nbsp; {{customerEmail}}
             </address>
           </div>
         </div>
@@ -591,7 +591,7 @@
             <div class="party-name">{{customerName}}</div>
             <address class="party-addr">
               {{shipAddress}}<br />
-              {{shipCity}}, {{shipState}}{{#shipPincode}} — {{shipPincode}}{{/shipPincode}}
+              {{shipCity}}, {{shipState}} — {{shipPincode}}
             </address>
           </div>
         </div>
