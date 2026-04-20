@@ -440,6 +440,7 @@
       <div class="addr-block">
         <div class="addr-label">Billed From</div>
         <div class="addr-name">{{businessName}}</div>
+        <span class="addr-tag">GSTIN: {{businessGstin}}</span>
         <address class="addr-text">
           {{businessAddress}}<br />
           {{businessCity}}, {{businessState}}
@@ -479,7 +480,7 @@
           </tr>
         </thead>
         <tbody>
-          {{items}}
+          {{{items}}}
         </tbody>
       </table>
     </div>

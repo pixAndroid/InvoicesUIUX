@@ -105,6 +105,13 @@
       margin-top: 3px;
     }
 
+    .brand-detail {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+      line-height: 1.5;
+    }
+
     .inv-block { text-align: right; }
 
     .inv-title {
@@ -423,6 +430,8 @@
       <div class="brand-info">
         <h1>{{businessName}}</h1>
         <div class="brand-gstin">GSTIN: {{businessGstin}}</div>
+        <div class="brand-detail">{{businessAddress}}, {{businessCity}}, {{businessState}}</div>
+        <div class="brand-detail">{{businessPhone}} &nbsp;·&nbsp; {{businessEmail}}</div>
       </div>
     </div>
 
@@ -465,7 +474,8 @@
       <div class="party-detail" style="font-size:11px;">
         {{businessAddress}}<br />
         {{businessCity}}, {{businessState}}<br />
-        {{businessPhone}}
+        {{businessPhone}}<br />
+        {{businessEmail}}
       </div>
     </div>
   </div>
@@ -485,7 +495,7 @@
         </tr>
       </thead>
       <tbody>
-        {{items}}
+        {{{items}}}
       </tbody>
     </table>
   </div>
